@@ -1,0 +1,5 @@
+{
+  "name": "Hora Extra",
+  "description": "A comprehensive system to manage employee data, track overtime hours, and generate payment receipts. It features a dashboard for quick stats, detailed forms for data entry, and a receipt generation module.",
+  "requestFramePermissions": []
+}

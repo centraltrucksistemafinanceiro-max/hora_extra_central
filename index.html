@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Gerenciamento de Horas Extras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out',
+              'fade-in-up': 'fadeInUp 0.5s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "recharts": "https://aistudiocdn.com/recharts@^2.12.7",
+    "recharts/": "https://aistudiocdn.com/recharts@^2.12.7/",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/"
+  }
+}
+</script>
+<style>
+  body {
+    background-color: #020617; /* slate-950 */
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #020617; 
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b; 
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #334155; 
+  }
+</style>
+</head>
+  <body class="text-slate-200 antialiased selection:bg-sky-500/30 selection:text-sky-200">
+    <div id="root"></div>
+  </body>
+</html>
