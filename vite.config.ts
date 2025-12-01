@@ -18,6 +18,26 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'react-vendor': ['react', 'react-dom'],
+              'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+              'charts-vendor': ['recharts']
+            }
+          }
+        },
+        chunkSizeWarningLimit: 1000,
+        sourcemap: false,
+        minify: 'terser',
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true
+          }
+        }
       }
     };
 });
