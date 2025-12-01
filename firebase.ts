@@ -3,14 +3,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+// Read Firebase configuration from environment variables.
+// Use Vite's `import.meta.env` with `VITE_` prefix for public vars.
 const firebaseConfig = {
-  apiKey: "AIzaSyCyO8lf2V62X_PBR6kdQZ8zhxvEfVJndPs",
-  authDomain: "hora-extra-central.firebaseapp.com",
-  projectId: "hora-extra-central",
-  storageBucket: "hora-extra-central.firebasestorage.app",
-  messagingSenderId: "855086040858",
-  appId: "1:855086040858:web:667a290e5dfda37bce8ea3"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
 };
 
 // Initialize Firebase

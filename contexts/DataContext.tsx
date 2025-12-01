@@ -58,23 +58,48 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentUser]);
 
   const addEmployee = async (employeeData: Omit<Employee, 'id'>) => {
-    await addDoc(collection(db, 'employees'), employeeData);
+    try {
+      await addDoc(collection(db, 'employees'), employeeData);
+    } catch (error) {
+      console.error('Failed to add employee:', error);
+      throw new Error('Falha ao adicionar funcionário.');
+    }
   };
 
   const updateEmployee = async (id: string, employeeData: Partial<Omit<Employee, 'id'>>) => {
-    await updateDoc(doc(db, 'employees', id), employeeData);
+    try {
+      await updateDoc(doc(db, 'employees', id), employeeData);
+    } catch (error) {
+      console.error('Failed to update employee:', error);
+      throw new Error('Falha ao atualizar funcionário.');
+    }
   };
 
   const addOvertimeRecord = async (recordData: Omit<OvertimeRecord, 'id'>) => {
-    await addDoc(collection(db, 'overtimeRecords'), recordData);
+    try {
+      await addDoc(collection(db, 'overtimeRecords'), recordData);
+    } catch (error) {
+      console.error('Failed to add overtime record:', error);
+      throw new Error('Falha ao adicionar registro de hora extra.');
+    }
   };
 
   const updateOvertimeRecord = async (id: string, recordData: Partial<Omit<OvertimeRecord, 'id'>>) => {
-    await updateDoc(doc(db, 'overtimeRecords', id), recordData);
+    try {
+      await updateDoc(doc(db, 'overtimeRecords', id), recordData);
+    } catch (error) {
+      console.error('Failed to update overtime record:', error);
+      throw new Error('Falha ao atualizar registro de hora extra.');
+    }
   };
   
   const deleteOvertimeRecord = async (id: string) => {
-    await deleteDoc(doc(db, 'overtimeRecords', id));
+    try {
+      await deleteDoc(doc(db, 'overtimeRecords', id));
+    } catch (error) {
+      console.error('Failed to delete overtime record:', error);
+      throw new Error('Falha ao remover registro de hora extra.');
+    }
   };
   
   const value = {

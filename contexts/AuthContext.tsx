@@ -9,6 +9,7 @@ import {
   User as FirebaseUser,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, collection, onSnapshot, query, getDocs, limit } from 'firebase/firestore';
+import { deleteUser } from 'firebase/auth';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -113,12 +114,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const email = `${username.toLowerCase()}@centraltruck.app`;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      
-      await setDoc(doc(db, 'users', user.uid), {
-        username: username.toUpperCase(),
-        role: role,
-      });
-      return { success: true };
+      // Try to create the Firestore document for this user. If that fails,
+      // attempt to delete the created Authentication user to avoid orphaned auth accounts.
+      try {
+        await setDoc(doc(db, 'users', user.uid), {
+          username: username.toUpperCase(),
+          role: role,
+        });
+        return { success: true };
+      } catch (firestoreError: any) {
+        console.error('Failed to write user document, attempting to rollback auth user:', firestoreError);
+        try {
+          await deleteUser(user);
+        } catch (deleteErr) {
+          console.error('Failed to delete auth user after Firestore failure:', deleteErr);
+        }
+        return { success: false, error: 'Falha ao criar usuário (erro ao salvar dados).' };
+      }
     } catch (error: any) {
       console.error("Failed to add user:", error);
       if (error.code === 'auth/email-already-in-use') {
