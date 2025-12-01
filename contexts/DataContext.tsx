@@ -33,6 +33,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setLoading(true);
     
+    if (!db) {
+      console.warn('DataContext: Firestore is not available (missing config). Skipping listeners.');
+      setEmployees([]);
+      setOvertimeRecords([]);
+      setLoading(false);
+      return;
+    }
+
     const employeesQuery = query(collection(db, 'employees'), orderBy('name', 'asc'));
     const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
       const employeesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Employee));

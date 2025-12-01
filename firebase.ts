@@ -14,8 +14,32 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Check configuration presence
+const isFirebaseConfigured = [
+  firebaseConfig.apiKey,
+  firebaseConfig.authDomain,
+  firebaseConfig.projectId,
+  firebaseConfig.storageBucket,
+  firebaseConfig.messagingSenderId,
+  firebaseConfig.appId,
+].every(v => typeof v === 'string' && v.length > 0);
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+if (!isFirebaseConfigured) {
+  // Log a clear message for runtime debugging (Vercel logs / browser console)
+  console.error('Firebase is not configured. Please set VITE_FIREBASE_* environment variables.');
+}
+
+// Initialize Firebase only when configured
+let app: any = undefined;
+let _auth: any = undefined;
+let _db: any = undefined;
+
+if (isFirebaseConfigured) {
+  app = initializeApp(firebaseConfig);
+  _auth = getAuth(app);
+  _db = getFirestore(app);
+}
+
+export const auth = _auth;
+export const db = _db;
+export const isFirebaseConfiguredFlag = isFirebaseConfigured;

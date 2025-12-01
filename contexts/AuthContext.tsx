@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import type { User, Role } from '../types';
-import { auth, db } from '../firebase';
+import { auth, db, isFirebaseConfiguredFlag } from '../firebase';
 import { 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
@@ -32,6 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const checkFirstRun = async () => {
+      if (!isFirebaseConfiguredFlag) {
+        console.error('AuthContext: Firebase not configured, skipping initialization.');
+        setLoading(false);
+        setSetupRequired(true);
+        return;
+      }
       const usersQuery = query(collection(db, "users"), limit(1));
       const snapshot = await getDocs(usersQuery);
       if (snapshot.empty) {
