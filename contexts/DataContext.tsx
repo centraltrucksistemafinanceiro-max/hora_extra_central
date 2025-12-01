@@ -66,6 +66,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentUser]);
 
   const addEmployee = async (employeeData: Omit<Employee, 'id'>) => {
+    if (!db) throw new Error('Firebase não está configurado.');
     try {
       await addDoc(collection(db, 'employees'), employeeData);
     } catch (error) {
@@ -75,6 +76,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateEmployee = async (id: string, employeeData: Partial<Omit<Employee, 'id'>>) => {
+    if (!db) throw new Error('Firebase não está configurado.');
     try {
       await updateDoc(doc(db, 'employees', id), employeeData);
     } catch (error) {
@@ -84,6 +86,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const addOvertimeRecord = async (recordData: Omit<OvertimeRecord, 'id'>) => {
+    if (!db) throw new Error('Firebase não está configurado.');
     try {
       await addDoc(collection(db, 'overtimeRecords'), recordData);
     } catch (error) {
@@ -93,6 +96,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateOvertimeRecord = async (id: string, recordData: Partial<Omit<OvertimeRecord, 'id'>>) => {
+    if (!db) throw new Error('Firebase não está configurado.');
     try {
       await updateDoc(doc(db, 'overtimeRecords', id), recordData);
     } catch (error) {
@@ -102,6 +106,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   
   const deleteOvertimeRecord = async (id: string) => {
+    if (!db) throw new Error('Firebase não está configurado.');
     try {
       await deleteDoc(doc(db, 'overtimeRecords', id));
     } catch (error) {
