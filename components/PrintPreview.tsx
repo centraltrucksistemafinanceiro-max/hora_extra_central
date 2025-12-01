@@ -8,6 +8,18 @@ interface PrintPreviewProps {
 
 const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
 
+  console.log('PrintPreview received summaries:', summaries);
+  console.log('Unique employees:', new Set(summaries.map(s => s.employeeId)).size, 'Total summaries:', summaries.length);
+
+  // Ensure no duplicates by employee ID
+  const uniqueSummaries = Array.from(
+    new Map(summaries.map(s => [s.employeeId, s])).values()
+  );
+  
+  if (uniqueSummaries.length !== summaries.length) {
+    console.warn('Duplicated summaries found! Filtered from', summaries.length, 'to', uniqueSummaries.length);
+  }
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   }
@@ -27,8 +39,8 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
   }
 
   // Chunk summaries into groups of 4 for each page
-  const pages = Array.from({ length: Math.ceil(summaries.length / 4) }, (_, i) =>
-    summaries.slice(i * 4, i * 4 + 4)
+  const pages = Array.from({ length: Math.ceil(uniqueSummaries.length / 4) }, (_, i) =>
+    uniqueSummaries.slice(i * 4, i * 4 + 4)
   );
 
   return (
@@ -71,14 +83,18 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
           }
           .receipt-item {
             flex: 1;
+            border: 2px solid #000;
             border-bottom: 1px dashed #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 0.5cm 0;
+            padding: 0.5cm;
+            margin-bottom: 0.3cm;
+            box-sizing: border-box;
           }
           .receipt-item:last-child {
-            border-bottom: none;
+            border-bottom: 2px solid #000;
+            margin-bottom: 0;
           }
         }
       `}</style>
@@ -86,7 +102,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
         <div className="p-5 flex justify-between items-center border-b border-slate-700 bg-slate-900 no-print">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Visualização de Impressão <span className="text-sm font-normal text-slate-400 ml-2">({summaries.length} recibos)</span>
+                Visualização de Impressão <span className="text-sm font-normal text-slate-400 ml-2">({uniqueSummaries.length} recibos em {pages.length} página{pages.length > 1 ? 's' : ''} A4 • 4 recibos por página)</span>
             </h2>
             <div className="flex gap-4">
                 <button onClick={handlePrint} className="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg shadow-sky-900/20">Imprimir</button>
@@ -96,10 +112,15 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
         <div className="p-4 sm:p-8 bg-white print-area text-black font-sans">
             {pages.map((pageSummaries, pageIndex) => (
                 <div key={pageIndex} className="receipt-page">
-                    {pageSummaries.map((summary) => (
-                       <div key={summary.employeeId} className="receipt-item">
-                            <div className="flex justify-between items-center pb-1 border-b border-black mb-1">
-                                <h1 className="text-sm font-bold text-black uppercase tracking-tight">Central Truck</h1>
+                    {pageSummaries.map((summary, summaryIndex) => {
+                        const currentReceiptNumber = pageIndex * 4 + summaryIndex + 1;
+                        return (
+                       <div key={`${pageIndex}-${summaryIndex}`} className="receipt-item">
+                            <div className="flex justify-between items-start pb-1 border-b border-black mb-1">
+                                <div>
+                                    <h1 className="text-sm font-bold text-black uppercase tracking-tight">Central Truck</h1>
+                                    <p className="text-[7px] text-black">Recibo nº {currentReceiptNumber}</p>
+                                </div>
                                 <div className="text-right">
                                     <h2 className="text-[10px] font-bold text-black uppercase">Recibo de Pagamento</h2>
                                     <p className="text-[7px] text-black italic">Ref. Horas Extras</p>
@@ -147,7 +168,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
                                 </div>
                             </div>
                        </div>
-                    ))}
+                    )})}
                 </div>
             ))}
         </div>
