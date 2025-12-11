@@ -24,13 +24,6 @@ const MainLayout: React.FC<{currentUser: User}> = ({currentUser}) => {
   const [isConfidential, setIsConfidential] = useState<boolean>(false);
   const { employees, overtimeRecords, loading } = useData();
 
-  // If a non-admin user somehow navigates to Configurações, redirect safely
-  React.useEffect(() => {
-    if (activeTab === 'Configurações' && currentUser.role !== 'admin') {
-      setActiveTab('Início');
-    }
-  }, [activeTab, currentUser]);
-
   const renderContent = () => {
     if (loading) {
         return <div className="flex justify-center items-center mt-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-500"></div></div>;
@@ -49,7 +42,8 @@ const MainLayout: React.FC<{currentUser: User}> = ({currentUser}) => {
         if (currentUser.role === 'admin') {
             return <Settings />;
         }
-        // Non-admin users see the dashboard (do not call setState during render)
+        // Fallback for non-admin users trying to access settings
+        setActiveTab('Início');
         return <Dashboard employees={employees} overtimeRecords={overtimeRecords} isConfidential={isConfidential} />;
       default:
         return <Dashboard employees={employees} overtimeRecords={overtimeRecords} isConfidential={isConfidential} />;

@@ -47,17 +47,15 @@ const Receipts: React.FC<ReceiptsProps> = ({ isConfidential }) => {
       const hours = calculateHoursWorked(record.startTime, record.endTime);
       const value = calculateOvertimeValue(employee.baseSalary, hours, record.serviceType);
 
-      const key = employee.id; // Use only employee.id as key
-      
-      if (summaryMap.has(key)) {
-        const existing = summaryMap.get(key)!;
+      if (summaryMap.has(employee.id)) {
+        const existing = summaryMap.get(employee.id)!;
         existing.totalHours += hours;
         existing.totalValue += value;
         if (record.date > existing.lastDate) {
           existing.lastDate = record.date;
         }
       } else {
-        summaryMap.set(key, {
+        summaryMap.set(employee.id, {
           employeeId: employee.id,
           employeeCode: employee.code,
           employeeName: employee.name,
@@ -68,9 +66,9 @@ const Receipts: React.FC<ReceiptsProps> = ({ isConfidential }) => {
       }
     });
 
-    return Array.from(summaryMap.values())
-      .filter(summary => summary.employeeName.toUpperCase().includes(searchTerm.toUpperCase()))
-      .sort((a, b) => a.employeeName.localeCompare(b.employeeName));
+    return Array.from(summaryMap.values()).filter(summary =>
+      summary.employeeName.toUpperCase().includes(searchTerm.toUpperCase())
+    );
   }, [overtimeRecords, employees, searchTerm, startDateFilter, endDateFilter]);
   
   const handleSelect = (id: string) => {

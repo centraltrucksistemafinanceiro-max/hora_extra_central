@@ -33,14 +33,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setLoading(true);
     
-    if (!db) {
-      console.warn('DataContext: Firestore is not available (missing config). Skipping listeners.');
-      setEmployees([]);
-      setOvertimeRecords([]);
-      setLoading(false);
-      return;
-    }
-
     const employeesQuery = query(collection(db, 'employees'), orderBy('name', 'asc'));
     const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
       const employeesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Employee));
@@ -66,53 +58,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentUser]);
 
   const addEmployee = async (employeeData: Omit<Employee, 'id'>) => {
-    if (!db) throw new Error('Firebase não está configurado.');
-    try {
-      await addDoc(collection(db, 'employees'), employeeData);
-    } catch (error) {
-      console.error('Failed to add employee:', error);
-      throw new Error('Falha ao adicionar funcionário.');
-    }
+    await addDoc(collection(db, 'employees'), employeeData);
   };
 
   const updateEmployee = async (id: string, employeeData: Partial<Omit<Employee, 'id'>>) => {
-    if (!db) throw new Error('Firebase não está configurado.');
-    try {
-      await updateDoc(doc(db, 'employees', id), employeeData);
-    } catch (error) {
-      console.error('Failed to update employee:', error);
-      throw new Error('Falha ao atualizar funcionário.');
-    }
+    await updateDoc(doc(db, 'employees', id), employeeData);
   };
 
   const addOvertimeRecord = async (recordData: Omit<OvertimeRecord, 'id'>) => {
-    if (!db) throw new Error('Firebase não está configurado.');
-    try {
-      await addDoc(collection(db, 'overtimeRecords'), recordData);
-    } catch (error) {
-      console.error('Failed to add overtime record:', error);
-      throw new Error('Falha ao adicionar registro de hora extra.');
-    }
+    await addDoc(collection(db, 'overtimeRecords'), recordData);
   };
 
   const updateOvertimeRecord = async (id: string, recordData: Partial<Omit<OvertimeRecord, 'id'>>) => {
-    if (!db) throw new Error('Firebase não está configurado.');
-    try {
-      await updateDoc(doc(db, 'overtimeRecords', id), recordData);
-    } catch (error) {
-      console.error('Failed to update overtime record:', error);
-      throw new Error('Falha ao atualizar registro de hora extra.');
-    }
+    await updateDoc(doc(db, 'overtimeRecords', id), recordData);
   };
   
   const deleteOvertimeRecord = async (id: string) => {
-    if (!db) throw new Error('Firebase não está configurado.');
-    try {
-      await deleteDoc(doc(db, 'overtimeRecords', id));
-    } catch (error) {
-      console.error('Failed to delete overtime record:', error);
-      throw new Error('Falha ao remover registro de hora extra.');
-    }
+    await deleteDoc(doc(db, 'overtimeRecords', id));
   };
   
   const value = {
