@@ -22,26 +22,35 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex justify-center items-start p-4 sm:p-8 z-50 overflow-y-auto">
       <style>{`
         @media print {
-          /* Hide everything by default */
-          body * {
-            visibility: hidden !important;
+          /* Desativar fundo escuro e outros elementos da UI */
+          body {
+            background: white !important;
             margin: 0 !important;
             padding: 0 !important;
           }
           
-          /* Only show the print container and its children */
-          #print-receipt-container, #print-receipt-container * {
+          /* Esconder tudo que não seja a área de impressão */
+          body > * {
+            display: none !important;
+          }
+
+          /* Forçar a exibição do portal do React se necessário, ou usar visibilidade */
+          /* No nosso caso, como o PrintPreview está dentro do root, vamos usar visibilidade no body */
+          
+          body {
+            visibility: hidden;
+          }
+
+          .print-area-container, .print-area-container * {
             visibility: visible !important;
           }
 
-          #print-receipt-container {
+          .print-area-container {
             position: absolute !important;
             left: 0 !important;
             top: 0 !important;
             width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background: white !important;
+            display: block !important;
           }
 
           .no-print {
@@ -56,8 +65,9 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
           .receipt-page {
             width: 100% !important;
             page-break-after: always !important;
-            display: block !important;
             background: white !important;
+            display: block !important;
+            clear: both;
           }
 
           .receipt-page:last-child {
@@ -69,6 +79,8 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
             margin-bottom: 0.5cm !important;
             padding: 10px !important;
             page-break-inside: avoid !important;
+            display: flex !important;
+            flex-direction: column !important;
           }
         }
       `}</style>
@@ -84,9 +96,8 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
             </div>
         </div>
         
-        {/* Scrollable Preview for UI */}
         <div className="p-8 bg-gray-100 overflow-y-auto max-h-[70vh]">
-            <div id="print-receipt-container" className="bg-white text-black font-sans mx-auto shadow-sm" style={{ width: '210mm' }}>
+            <div className="print-area-container bg-white text-black font-sans mx-auto shadow-sm" style={{ width: '210mm', minHeight: '297mm' }}>
                 {pages.map((pageSummaries, pageIndex) => (
                     <div key={pageIndex} className="receipt-page p-[1cm]">
                         {pageSummaries.map((summary) => (

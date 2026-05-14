@@ -36,18 +36,19 @@ const PrintPreviewOvertime: React.FC<PrintPreviewOvertimeProps> = ({ records, em
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex justify-center items-start p-4 sm:p-8 z-50 overflow-y-auto animate-fade-in no-print">
       <style>{`
         @media print {
-          body * {
-            visibility: hidden !important;
+          body {
+            visibility: hidden;
+            background: white !important;
           }
-          #print-report-container, #print-report-container * {
+          .print-area-container, .print-area-container * {
             visibility: visible !important;
           }
-          #print-report-container {
+          .print-area-container {
             position: absolute !important;
             left: 0 !important;
             top: 0 !important;
             width: 100% !important;
-            background: white !important;
+            display: block !important;
           }
           .no-print {
             display: none !important;
@@ -61,6 +62,7 @@ const PrintPreviewOvertime: React.FC<PrintPreviewOvertimeProps> = ({ records, em
             page-break-after: always !important;
             background: white !important;
             padding: 0.5cm !important;
+            display: block !important;
           }
            .print-page:last-child {
             page-break-after: auto !important;
@@ -79,9 +81,8 @@ const PrintPreviewOvertime: React.FC<PrintPreviewOvertimeProps> = ({ records, em
             </div>
         </div>
         
-        {/* UI Preview Area */}
         <div className="p-4 sm:p-8 bg-gray-100 overflow-y-auto max-h-[75vh]">
-            <div id="print-report-container" className="bg-white text-black font-sans shadow-sm mx-auto p-8" style={{ minWidth: '280mm' }}>
+            <div className="print-area-container bg-white text-black font-sans shadow-sm mx-auto p-8" style={{ minWidth: '280mm' }}>
                 <div className="print-page">
                   <header className="flex justify-between items-end mb-6 pb-4 border-b border-black">
                     <div>
