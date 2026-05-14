@@ -3,6 +3,7 @@ import type { Employee } from '../types';
 import ConfirmationModal from './ConfirmationModal';
 import BatchEmployeeModal from './BatchEmployeeModal';
 import { useData } from '../contexts/DataContext';
+import { formatCurrency } from '../utils/formatters';
 
 interface EmployeesProps {
   isConfidential: boolean;
@@ -15,6 +16,17 @@ interface FormErrors {
 }
 
 declare const XLSX: any;
+
+const InputField: React.FC<{ label: string, id: string, children: React.ReactNode, error?: string }> = ({ label, id, children, error }) => (
+  <div className="group">
+    <label htmlFor={id} className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide group-focus-within:text-sky-400 transition-colors">{label}</label>
+    {children}
+    {error && <p className="text-red-400 text-xs mt-1 animate-pulse flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+      {error}
+    </p>}
+  </div>
+);
 
 const Employees: React.FC<EmployeesProps> = ({ isConfidential }) => {
   const { employees, addEmployee, updateEmployee } = useData();
@@ -54,10 +66,6 @@ const Employees: React.FC<EmployeesProps> = ({ isConfidential }) => {
     setErrors({});
   };
   
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  };
-
   const handleAdd = async () => {
     if (!validateForm()) return;
     
@@ -174,17 +182,6 @@ const Employees: React.FC<EmployeesProps> = ({ isConfidential }) => {
     XLSX.writeFile(workbook, `Relatorio_Funcionarios_${today}.xlsx`);
   };
 
-  const InputField: React.FC<{ label: string, id: string, children: React.ReactNode, error?: string }> = ({ label, id, children, error }) => (
-    <div className="group">
-      <label htmlFor={id} className="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide group-focus-within:text-sky-400 transition-colors">{label}</label>
-      {children}
-      {error && <p className="text-red-400 text-xs mt-1 animate-pulse flex items-center gap-1">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
-        {error}
-      </p>}
-    </div>
-  );
-  
   return (
     <>
         <ConfirmationModal

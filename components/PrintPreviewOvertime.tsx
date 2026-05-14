@@ -1,6 +1,7 @@
 import React from 'react';
 import type { OvertimeRecord, Employee } from '../types';
 import { calculateHoursWorked, calculateOvertimeValue } from '../utils/calculations';
+import { formatCurrency, formatDate } from '../utils/formatters';
 
 interface PrintPreviewOvertimeProps {
   records: OvertimeRecord[];
@@ -12,15 +13,6 @@ interface PrintPreviewOvertimeProps {
 
 const PrintPreviewOvertime: React.FC<PrintPreviewOvertimeProps> = ({ records, employees, onClose, startDate, endDate }) => {
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', 'currency': 'BRL' }).format(value);
-  }
-  
-  const formatDate = (dateString: string) => {
-      if (!dateString) return 'N/A';
-      return new Date(dateString).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-  }
-  
   const getEmployeeName = (id: string) => employees.find(e => e.id === id)?.name || 'Desconhecido';
 
   const handlePrint = () => {

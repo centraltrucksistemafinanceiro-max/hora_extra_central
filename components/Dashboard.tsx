@@ -1,14 +1,42 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import type { Employee, OvertimeRecord } from '../types';
 import { calculateHoursWorked, calculateOvertimeValue } from '../utils/calculations';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-
 
 interface DashboardProps {
   employees: Employee[];
   overtimeRecords: OvertimeRecord[];
   isConfidential: boolean;
 }
+
+const StatCard: React.FC<{ title: string; value: string; icon: React.ReactNode; gradient: string }> = ({ title, value, icon, gradient }) => (
+  <div className="relative overflow-hidden bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-6 group transition-all duration-300 hover:border-sky-500/30 hover:shadow-lg hover:shadow-sky-500/10">
+    <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity ${gradient}`}></div>
+    <div className="relative flex items-center gap-5">
+      <div className={`p-4 rounded-xl text-white shadow-lg shadow-black/20 ${gradient} relative overflow-hidden group-hover:scale-110 transition-transform duration-300`}>
+        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        {icon}
+      </div>
+      <div>
+        <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">{title}</h3>
+        <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{value}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const ChartContainer: React.FC<{title: string, children: React.ReactNode}> = ({title, children}) => (
+  <div className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-6 transition-all duration-300 hover:border-slate-700/80 shadow-xl">
+    <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+      <span className="w-1.5 h-6 bg-gradient-to-b from-sky-400 to-indigo-500 rounded-full shadow-[0_0_10px_rgba(56,189,248,0.5)]"></span>
+      {title}
+    </h3>
+    <div className="h-72">
+      {children}
+    </div>
+  </div>
+);
 
 const Dashboard: React.FC<DashboardProps> = ({ employees, overtimeRecords, isConfidential }) => {
   const getMonthDateRange = (date = new Date()) => {
@@ -26,10 +54,6 @@ const Dashboard: React.FC<DashboardProps> = ({ employees, overtimeRecords, isCon
     return () => clearTimeout(timer);
   }, []);
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  };
-  
   const filteredRecords = useMemo(() => {
     return overtimeRecords.filter(record => {
       const isEmployeeMatch = selectedEmployeeId === 'all' || record.employeeId === selectedEmployeeId;
@@ -70,7 +94,7 @@ const Dashboard: React.FC<DashboardProps> = ({ employees, overtimeRecords, isCon
     const dataMap = new Map<string, number>();
     filteredRecords.forEach(record => {
         const hours = calculateHoursWorked(record.startTime, record.endTime);
-        const dateKey = new Date(record.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+        const dateKey = formatDate(record.date);
         const currentHours = dataMap.get(dateKey) || 0;
         dataMap.set(dateKey, currentHours + hours);
     });
@@ -129,34 +153,6 @@ const Dashboard: React.FC<DashboardProps> = ({ employees, overtimeRecords, isCon
     'Service': ['#0ea5e9', '#ef4444']
   };
 
-  const StatCard: React.FC<{ title: string; value: string; icon: React.ReactNode; colorClass: string, gradient: string }> = ({ title, value, icon, colorClass, gradient }) => (
-    <div className="relative overflow-hidden bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-6 group transition-all duration-300 hover:border-sky-500/30 hover:shadow-lg hover:shadow-sky-500/10">
-      <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity ${gradient}`}></div>
-      <div className="relative flex items-center gap-5">
-        <div className={`p-4 rounded-xl text-white shadow-lg shadow-black/20 ${gradient} relative overflow-hidden group-hover:scale-110 transition-transform duration-300`}>
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          {icon}
-        </div>
-        <div>
-          <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">{title}</h3>
-          <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{value}</p>
-        </div>
-      </div>
-    </div>
-  );
-  
-  const ChartContainer: React.FC<{title: string, children: React.ReactNode}> = ({title, children}) => (
-    <div className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-6 transition-all duration-300 hover:border-slate-700/80 shadow-xl">
-      <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-        <span className="w-1.5 h-6 bg-gradient-to-b from-sky-400 to-indigo-500 rounded-full shadow-[0_0_10px_rgba(56,189,248,0.5)]"></span>
-        {title}
-      </h3>
-      <div className="h-72">
-        {children}
-      </div>
-    </div>
-  );
-
   return (
     <div className={`space-y-8 transition-opacity duration-700 ease-in-out ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
         {/* Global Filters */}
@@ -197,21 +193,18 @@ const Dashboard: React.FC<DashboardProps> = ({ employees, overtimeRecords, isCon
                 title="Funcionários Ativos" 
                 value={String(activeEmployeesCount)} 
                 icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>}
-                colorClass="bg-emerald-500/80"
                 gradient="bg-gradient-to-br from-emerald-500 to-teal-600"
             />
             <StatCard 
                 title="Horas Extras no Período" 
                 value={`${totalHours.toFixed(1).replace('.', ',')}h`}
                 icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-                colorClass="bg-sky-500/80"
                 gradient="bg-gradient-to-br from-sky-500 to-blue-600"
             />
             <StatCard 
                 title="Valor Total no Período" 
                 value={isConfidential ? 'R$ ••••••' : formatCurrency(totalPaid)} 
                 icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1h4v1m-4 0a3 3 0 00-3 3v1a3 3 0 003 3h1a3 3 0 003-3v-1a3 3 0 00-3-3h-1m-4 4H5m14 0h-4" /></svg>}
-                colorClass="bg-amber-500/80"
                 gradient="bg-gradient-to-br from-amber-500 to-orange-600"
             />
         </div>

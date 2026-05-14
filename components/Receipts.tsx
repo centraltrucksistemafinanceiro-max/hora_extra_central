@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { OvertimeRecord, Employee } from '../types';
 import { calculateHoursWorked, calculateOvertimeValue } from '../utils/calculations';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import PrintPreview from './PrintPreview';
 import { useData } from '../contexts/DataContext';
 
@@ -24,8 +25,6 @@ const Receipts: React.FC<ReceiptsProps> = ({ isConfidential }) => {
   const [startDateFilter, setStartDateFilter] = useState('');
   const [endDateFilter, setEndDateFilter] = useState('');
   const [showPrintPreview, setShowPrintPreview] = useState(false);
-
-  const formatCurrency = (value: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   const receiptSummaries = useMemo<ReceiptSummary[]>(() => {
     const filteredRecords = overtimeRecords
@@ -167,7 +166,7 @@ const Receipts: React.FC<ReceiptsProps> = ({ isConfidential }) => {
                       <td className={`p-5 font-semibold text-white ${selectedIds.has(summary.employeeId) ? 'text-sky-400' : ''}`}>{summary.employeeName}</td>
                       <td className="p-5 text-right font-mono text-slate-300">{summary.totalHours.toFixed(2)}</td>
                       <td className="p-5 text-right font-mono font-bold text-emerald-400">{isConfidential ? 'R$ ••••••' : formatCurrency(summary.totalValue)}</td>
-                      <td className="p-5 text-right text-slate-400">{new Date(summary.lastDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
+                      <td className="p-5 text-right text-slate-400">{formatDate(summary.lastDate)}</td>
                   </tr>
                   ))}
                    {receiptSummaries.length === 0 && (

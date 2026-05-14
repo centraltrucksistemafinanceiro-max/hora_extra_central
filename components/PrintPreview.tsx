@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ReceiptSummary } from './Receipts';
+import { formatCurrency, getCurrentDateFormatted } from '../utils/formatters';
 
 interface PrintPreviewProps {
   summaries: ReceiptSummary[];
@@ -7,20 +8,6 @@ interface PrintPreviewProps {
 }
 
 const PrintPreview: React.FC<PrintPreviewProps> = ({ summaries, onClose }) => {
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  }
-  
-  const getCurrentDateFormatted = () => {
-    const date = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    };
-    return `São Paulo, ${date.toLocaleDateString('pt-BR', options)}`;
-  };
 
   const handlePrint = () => {
     window.print();

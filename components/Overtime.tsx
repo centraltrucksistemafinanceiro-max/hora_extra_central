@@ -5,6 +5,7 @@ import ConfirmationModal from './ConfirmationModal';
 import BatchOvertimeModal from './BatchOvertimeModal';
 import PrintPreviewOvertime from './PrintPreviewOvertime';
 import { useData } from '../contexts/DataContext';
+import { formatCurrency, formatDate } from '../utils/formatters';
 
 declare const XLSX: any;
 
@@ -356,8 +357,6 @@ const requestSort = (key: SortKey) => {
     XLSX.writeFile(workbook, `Relatorio_Horas_Extras_${today}.xlsx`);
   };
 
-  const formatCurrency = (value: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  
   return (
     <>
       <ConfirmationModal
@@ -559,7 +558,7 @@ const requestSort = (key: SortKey) => {
                             <tr key={record.id} onClick={() => handleSelectRecord(record)} className={`group cursor-pointer transition-all duration-200 ${isSelected ? 'bg-sky-500/10' : 'hover:bg-white/5'}`}>
                                 <td className="p-5 text-slate-500 group-hover:text-slate-400">{index+1}</td>
                                 <td className={`p-5 font-semibold text-white ${isSelected ? 'text-sky-400' : ''}`}>{getEmployeeName(record.employeeId)}</td>
-                                <td className="p-5">{new Date(record.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
+                                <td className="p-5">{formatDate(record.date)}</td>
                                 <td className="p-5 font-mono text-slate-400">{record.startTime}</td>
                                 <td className="p-5 font-mono text-slate-400">{record.endTime}</td>
                                 <td className="p-5 font-mono font-bold text-slate-200">{calculateHoursWorked(record.startTime, record.endTime).toFixed(2)}</td>

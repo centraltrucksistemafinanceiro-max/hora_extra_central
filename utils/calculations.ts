@@ -5,15 +5,14 @@ import type { ServiceType } from '../types';
 export const calculateHoursWorked = (startTime: string, endTime: string): number => {
   if (!startTime || !endTime) return 0;
   
-  // Ensure HH:MM:SS format for Date parsing consistency
-  const formatTime = (time: string) => (time.length === 5 ? `${time}:00` : time);
+  const formatTimeInternal = (time: string) => (time.length === 5 ? `${time}:00` : time);
 
-  const start = new Date(`2000-01-01T${formatTime(startTime)}`);
-  const end = new Date(`2000-01-01T${formatTime(endTime)}`);
+  const start = new Date(`2000-01-01T${formatTimeInternal(startTime)}`);
+  let end = new Date(`2000-01-01T${formatTimeInternal(endTime)}`);
 
   if (end <= start) {
-    // Assumes overnight is not a valid case for this app's logic
-    return 0;
+    // If end time is before start time, assume it's the next day
+    end = new Date(`2000-01-02T${formatTimeInternal(endTime)}`);
   }
   
   const diffMs = end.getTime() - start.getTime();
