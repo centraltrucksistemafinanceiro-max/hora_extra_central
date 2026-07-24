@@ -22,8 +22,19 @@ const Receipts: React.FC<ReceiptsProps> = ({ isConfidential }) => {
   const { employees, overtimeRecords } = useData();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
-  const [startDateFilter, setStartDateFilter] = useState('');
-  const [endDateFilter, setEndDateFilter] = useState('');
+  const [startDateFilter, setStartDateFilter] = useState(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}-01`;
+  });
+  const [endDateFilter, setEndDateFilter] = useState(() => {
+    const now = new Date();
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}-${lastDay}`;
+  });
   const [showPrintPreview, setShowPrintPreview] = useState(false);
 
   const receiptSummaries = useMemo<ReceiptSummary[]>(() => {
