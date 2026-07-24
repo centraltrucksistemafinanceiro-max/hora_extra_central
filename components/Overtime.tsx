@@ -46,6 +46,7 @@ const Overtime: React.FC<OvertimeProps> = ({ isConfidential }) => {
   const [showEmployeeSuggestions, setShowEmployeeSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const suggestionsListRef = useRef<HTMLUListElement>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
   const startTimeRef = useRef<HTMLInputElement>(null);
 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -168,7 +169,7 @@ const Overtime: React.FC<OvertimeProps> = ({ isConfidential }) => {
     setObservation('');
     setErrors({});
     setTimeout(() => {
-        startTimeRef.current?.focus();
+        dateRef.current?.focus();
     }, 0);
   };
   
@@ -464,7 +465,7 @@ const requestSort = (key: SortKey) => {
                 </div>
             </InputField>
             <InputField label="Data" error={errors.date}>
-                <input type="date" value={date} onChange={e => setDate(e.target.value)} className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all shadow-inner [color-scheme:dark] ${errors.date ? 'border-red-500/50 focus:ring-red-500/50' : 'border-slate-700 focus:border-sky-500/50 focus:ring-sky-500/30'}`} />
+                <input ref={dateRef} type="date" value={date} onChange={e => setDate(e.target.value)} className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all shadow-inner [color-scheme:dark] ${errors.date ? 'border-red-500/50 focus:ring-red-500/50' : 'border-slate-700 focus:border-sky-500/50 focus:ring-sky-500/30'}`} />
             </InputField>
             <InputField label="Hora Início">
                 <input ref={startTimeRef} type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all shadow-inner [color-scheme:dark] ${errors.time ? 'border-red-500/50 focus:ring-red-500/50' : 'border-slate-700 focus:border-sky-500/50 focus:ring-sky-500/30'}`} />
