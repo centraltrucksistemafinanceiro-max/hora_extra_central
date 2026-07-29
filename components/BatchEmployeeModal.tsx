@@ -63,6 +63,10 @@ const BatchEmployeeModal: React.FC<BatchEmployeeModalProps> = ({ isOpen, onClose
             if (!name) {
                 return { status: 'invalid', data: {}, error: 'Nome não pode estar em branco.', originalLine: line };
             }
+            const existingNames = new Set(existingEmployees.map(e => e.name.toUpperCase()));
+            if (existingNames.has(upperName)) {
+                 return { status: 'invalid', data: {}, error: `Nome '${name}' já existe.`, originalLine: line };
+            }
             
             // 3. Validate Salary
             const salary = parseCurrency(baseSalaryStr);

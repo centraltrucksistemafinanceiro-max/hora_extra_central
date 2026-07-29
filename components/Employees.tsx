@@ -41,8 +41,26 @@ const Employees: React.FC<EmployeesProps> = ({ isConfidential }) => {
 
   const validateForm = (): boolean => {
       const newErrors: FormErrors = {};
-      if (!code.trim()) newErrors.code = 'Código é obrigatório.';
-      if (!name.trim()) newErrors.name = 'Nome é obrigatório.';
+      if (!code.trim()) {
+          newErrors.code = 'Código é obrigatório.';
+      } else {
+          const isDuplicateCode = employees.some(emp => 
+              emp.code.toUpperCase() === code.trim().toUpperCase() && 
+              emp.id !== selectedEmployee?.id
+          );
+          if (isDuplicateCode) newErrors.code = 'Código já existe.';
+      }
+
+      if (!name.trim()) {
+          newErrors.name = 'Nome é obrigatório.';
+      } else {
+          const isDuplicateName = employees.some(emp => 
+              emp.name.toUpperCase() === name.trim().toUpperCase() && 
+              emp.id !== selectedEmployee?.id
+          );
+          if (isDuplicateName) newErrors.name = 'Nome já existe.';
+      }
+
       if (!baseSalary || isNaN(parseFloat(baseSalary)) || parseFloat(baseSalary) <= 0) {
           newErrors.baseSalary = 'Salário deve ser um número positivo.';
       }
